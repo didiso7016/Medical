@@ -1,0 +1,19 @@
+<%#
+  今日完成度。參數：done、total
+%>
+<%
+  const C = 2 * Math.PI * 22;
+  const ratio = total > 0 ? Math.min(done / total, 1) : 0;
+  const complete = total > 0 && done >= total;
+%>
+<div class="ring <%= complete ? 'is-complete' : '' %>"
+     role="img" aria-label="今日已服用 <%= done %> 種，共 <%= total %> 種">
+  <svg width="52" height="52" viewBox="0 0 52 52">
+    <circle class="ring__track" cx="26" cy="26" r="22" fill="none" stroke-width="4"/>
+    <circle class="ring__bar" cx="26" cy="26" r="22" fill="none" stroke-width="4"
+            stroke-linecap="round"
+            stroke-dasharray="<%= C.toFixed(2) %>"
+            stroke-dashoffset="<%= (C * (1 - ratio)).toFixed(2) %>"/>
+  </svg>
+  <span class="ring__label"><%= done %>/<%= total %></span>
+</div>

@@ -1,11 +1,14 @@
 <%- include('../partials/head', { title }) %>
 
-<main class="wrap" style="padding-top: calc(var(--safe-top) + 24px)">
+<main class="wrap picker">
   <a class="link-back" href="<%= person ? '/persons/' + person.id + '/today' : '/' %>">
     <%- icon('chevron-left', { size: 17 }) %>返回
   </a>
-  <h1 class="page-title"><%= person ? '成員設定' : '新增家庭成員' %></h1>
-  <p class="page-sub">每位成員的藥品、排程、仿單與紀錄完全獨立，不會互相看到。</p>
+
+  <div class="page-head">
+    <h1 class="page-title"><%= person ? '成員設定' : '新增家庭成員' %></h1>
+    <p class="page-sub">每位成員的藥品、排程、仿單與紀錄完全獨立，不會互相看到。</p>
+  </div>
 
   <% if (typeof error !== 'undefined' && error) { %>
     <div class="alert"><%- icon('alert', { size: 18 }) %><span><%= error %></span></div>
@@ -13,14 +16,14 @@
 
   <form method="post" action="<%= formAction %>">
     <div class="field">
-      <label for="name">稱呼</label>
+      <label class="field__label" for="name">稱呼</label>
       <input type="text" id="name" name="name" maxlength="12" required
              placeholder="例如：媽媽" value="<%= person ? person.name : '' %>">
       <p class="hint">頭像會顯示稱呼的最後兩個字，例如「阿公」顯示「阿公」。</p>
     </div>
 
     <div class="field">
-      <label>標示顏色</label>
+      <span class="field__label">標示顏色</span>
       <div class="color-picker">
         <% colors.forEach(function (c, i) { %>
           <label class="color-chip" data-color="<%= c.key %>">

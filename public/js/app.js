@@ -48,16 +48,30 @@ function formatTime(value) {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
+const doneCount = (nodes) => nodes.filter((n) => n.classList.contains('is-done')).length;
+
 function updateProgress() {
   const doses = [...document.querySelectorAll('.dose')];
-  const progress = document.querySelector('.progress strong');
-  if (progress) progress.textContent = String(doses.filter((d) => d.classList.contains('is-done')).length);
+  const total = doses.length;
+  const done = doneCount(doses);
 
-  for (const section of document.querySelectorAll('.section')) {
-    const count = section.querySelector('.count');
+  const ring = document.querySelector('.ring');
+  if (ring && total) {
+    const bar = ring.querySelector('.ring__bar');
+    const circumference = Number(bar.getAttribute('stroke-dasharray'));
+    bar.setAttribute('stroke-dashoffset', (circumference * (1 - done / total)).toFixed(2));
+    ring.querySelector('.ring__label').textContent = `${done}/${total}`;
+    ring.classList.toggle('is-complete', done >= total);
+    ring.setAttribute('aria-label', `今日已服用 ${done} 種，共 ${total} 種`);
+  }
+
+  for (const card of document.querySelectorAll('.slot-card')) {
+    const count = card.querySelector('.slot-card__count');
     if (!count) continue;
-    const items = [...section.querySelectorAll('.dose')];
-    count.textContent = `${items.filter((d) => d.classList.contains('is-done')).length}/${items.length}`;
+    const items = [...card.querySelectorAll('.dose')];
+    const slotDone = doneCount(items);
+    count.textContent = `${slotDone}/${items.length}`;
+    count.classList.toggle('is-complete', slotDone >= items.length);
   }
 }
 
@@ -68,9 +82,15 @@ document.addEventListener('change', (e) => {
     e.target.closest('.slot-row').classList.toggle('is-off', !e.target.checked);
   }
   if (e.target.matches('.file-drop input[type="file"]')) {
-    const label = e.target.parentElement.querySelector('.file-drop__label');
+    const drop = e.target.closest('.file-drop');
+    const label = drop.querySelector('.file-drop__label');
     const n = e.target.files.length;
-    if (label) label.textContent = n ? `已選擇 ${n} 個檔案` : '📷 拍照上傳（可多張）';
+    drop.classList.toggle('has-files', n > 0);
+    // 只換文字，圖示留著
+    const text = n ? `已選擇 ${n} 個檔案` : '拍照或選擇檔案';
+    label.lastChild.nodeType === Node.TEXT_NODE
+      ? (label.lastChild.textContent = text)
+      : label.append(text);
   }
 });
 

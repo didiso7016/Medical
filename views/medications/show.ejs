@@ -2,43 +2,50 @@
 <%- include('../partials/person-bar', { person, subtitle: '藥品' }) %>
 
 <main class="wrap">
-  <a class="link-back" href="/persons/<%= person.id %>/medications" style="margin-top:14px">
-    <%- icon('chevron-left', { size: 17 }) %>藥品清單
-  </a>
-
-  <h1 class="page-title">
-    <%= medication.display_name || medication.name %>
-    <% if (!medication.is_active) { %><span class="tag tag--muted">已停用</span><% } %>
-  </h1>
-  <p class="page-sub"><%= medication.name %></p>
+  <div class="page-head page-head--tight">
+    <a class="link-back" href="/persons/<%= person.id %>/medications">
+      <%- icon('chevron-left', { size: 17 }) %>藥品清單
+    </a>
+    <h1 class="page-title">
+      <%= medication.display_name || medication.name %>
+      <% if (!medication.is_active) { %><span class="tag tag--muted">已停用</span><% } %>
+    </h1>
+    <p class="page-sub"><%= medication.name %></p>
+  </div>
 
   <div class="card">
     <div class="detail-block">
-      <h2>服藥時段</h2>
+      <h2 class="detail-block__title">服藥時段</h2>
       <% if (schedules.length) { %>
         <ul class="slot-summary">
           <% schedules.forEach(function (s) { %>
             <li>
               <%- icon(SLOT_ICONS[s.slot_code], { size: 16 }) %>
               <span class="slot-summary__name"><%= s.slot_name %></span>
-              <span class="slot-summary__dose"><%= doseLine(s) || '—' %></span>
+              <span class="slot-summary__dose"><%= doseLine(s) || '未填劑量' %></span>
             </li>
           <% }) %>
         </ul>
       <% } else { %>
-        <p class="muted">尚未設定，這個藥品不會出現在「今日」清單。</p>
+        <p class="page-sub">尚未設定，這個藥品不會出現在「今日」清單。</p>
       <% } %>
     </div>
 
     <% if (medication.purpose) { %>
-      <div class="detail-block"><h2>用途</h2><p><%= medication.purpose %></p></div>
+      <div class="detail-block">
+        <h2 class="detail-block__title">用途</h2>
+        <p><%= medication.purpose %></p>
+      </div>
     <% } %>
     <% if (medication.note) { %>
-      <div class="detail-block"><h2>備註</h2><p><%= medication.note %></p></div>
+      <div class="detail-block">
+        <h2 class="detail-block__title">備註</h2>
+        <p><%= medication.note %></p>
+      </div>
     <% } %>
 
     <div class="detail-block">
-      <h2>仿單 / 藥袋<% if (attachments.length) { %>（<%= attachments.length %>）<% } %></h2>
+      <h2 class="detail-block__title">仿單 / 藥袋<% if (attachments.length) { %>（<%= attachments.length %>）<% } %></h2>
       <% if (attachments.length) { %>
         <div class="attach-grid">
           <% attachments.forEach(function (a) { %>
@@ -62,7 +69,7 @@
           <% }) %>
         </div>
       <% } else { %>
-        <p class="muted">還沒有上傳仿單或藥袋照片。</p>
+        <p class="page-sub">還沒有上傳仿單或藥袋照片。</p>
       <% } %>
     </div>
 
@@ -79,7 +86,7 @@
           <option value="bag">藥袋</option>
           <option value="other">其他</option>
         </select>
-        <button class="btn btn--sm" type="submit" style="flex:1">上傳</button>
+        <button class="btn btn--sm btn--block" type="submit">上傳</button>
       </div>
     </form>
   </div>
@@ -88,7 +95,7 @@
     <a class="btn" href="/persons/<%= person.id %>/medications/<%= medication.id %>/edit">
       <%- icon('pencil', { size: 17 }) %>編輯
     </a>
-    <form method="post" action="/persons/<%= person.id %>/medications/<%= medication.id %>/active" style="flex:1">
+    <form method="post" action="/persons/<%= person.id %>/medications/<%= medication.id %>/active">
       <input type="hidden" name="is_active" value="<%= medication.is_active ? '0' : '1' %>">
       <button class="btn btn--block" type="submit">
         <%- icon('power', { size: 17 }) %><%= medication.is_active ? '停用' : '重新啟用' %>

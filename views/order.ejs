@@ -2,44 +2,47 @@
 <%- include('partials/person-bar', { person, subtitle: '用藥排序' }) %>
 
 <main class="wrap">
-  <h1 class="page-title">用藥排序</h1>
-  <p class="page-sub">
-    調整 <%= person.name %> 在每個時段的服藥順序。排序只屬於這個人，不會影響其他家庭成員。
-  </p>
+  <div class="page-head">
+    <h1 class="page-title">用藥排序</h1>
+    <p class="page-sub">
+      調整 <%= person.name %> 在每個時段的服藥順序。排序只屬於這個人，不會影響其他家庭成員。
+    </p>
+  </div>
 
   <% if (!groups.length) { %>
-    <div class="card empty">
-      <%- icon('sort', { size: 32, stroke: 1.4 }) %>
-      <p>目前沒有可排序的用藥。</p>
+    <div class="card">
+      <div class="empty">
+        <%- icon('sort', { size: 32, stroke: 1.4 }) %>
+        <p class="empty__title">目前沒有可排序的用藥</p>
+      </div>
     </div>
   <% } else { %>
     <form method="post" action="/persons/<%= person.id %>/order">
       <% groups.forEach(function (group) { %>
-        <section class="section">
-          <h2 class="section__title">
-            <%- icon(SLOT_ICONS[group.slot.code], { size: 16 }) %><%= group.slot.name %>
-          </h2>
-          <div class="card">
-            <ul class="sortable" data-sortable>
-              <% group.items.forEach(function (item) { %>
-                <li class="sort-item">
-                  <%# key 不能是純數字：qs 會把 order[1] 當成陣列索引，時段就丟失了 %>
-                  <input type="hidden" name="order[slot_<%= group.slot.id %>][]" value="<%= item.id %>">
-                  <span class="sort-item__handle" data-drag-handle><%- icon('grip', { size: 20 }) %></span>
-                  <span class="sort-item__body">
-                    <span class="sort-item__name"><%= item.label %></span>
-                    <% if (doseLine(item)) { %>
-                      <span class="sort-item__meta"><%= doseLine(item) %></span>
-                    <% } %>
-                  </span>
-                  <span class="sort-item__moves">
-                    <button type="button" data-move="up" aria-label="上移"><%- icon('chevron-up', { size: 17 }) %></button>
-                    <button type="button" data-move="down" aria-label="下移"><%- icon('chevron-down', { size: 17 }) %></button>
-                  </span>
-                </li>
-              <% }) %>
-            </ul>
-          </div>
+        <section class="slot-card">
+          <header class="slot-card__head">
+            <%- icon(SLOT_ICONS[group.slot.code], { size: 17 }) %>
+            <h2 class="slot-card__name"><%= group.slot.name %></h2>
+          </header>
+          <ul class="sortable" data-sortable>
+            <% group.items.forEach(function (item) { %>
+              <li class="sort-item">
+                <%# key 不能是純數字：qs 會把 order[1] 當成陣列索引，時段就丟失了 %>
+                <input type="hidden" name="order[slot_<%= group.slot.id %>][]" value="<%= item.id %>">
+                <span class="sort-item__handle" data-drag-handle><%- icon('grip', { size: 20 }) %></span>
+                <span class="sort-item__body">
+                  <span class="sort-item__name"><%= item.label %></span>
+                  <% if (doseLine(item)) { %>
+                    <span class="sort-item__meta"><%= doseLine(item) %></span>
+                  <% } %>
+                </span>
+                <span class="sort-item__moves">
+                  <button type="button" data-move="up" aria-label="上移"><%- icon('chevron-up', { size: 17 }) %></button>
+                  <button type="button" data-move="down" aria-label="下移"><%- icon('chevron-down', { size: 17 }) %></button>
+                </span>
+              </li>
+            <% }) %>
+          </ul>
         </section>
       <% }) %>
 

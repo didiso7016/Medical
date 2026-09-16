@@ -7,8 +7,10 @@
     規格 §4：使用者已經在這個人的空間裡，
     所以這張表單沒有、也不需要「家庭成員」下拉選單。
   %>
-  <h1 class="page-title"><%= isNew ? '新增藥品' : '編輯藥品' %></h1>
-  <p class="page-sub">這筆藥品會直接屬於 <%= person.name %>。</p>
+  <div class="page-head">
+    <h1 class="page-title"><%= isNew ? '新增藥品' : '編輯藥品' %></h1>
+    <p class="page-sub">這筆藥品會直接屬於 <%= person.name %>。</p>
+  </div>
 
   <% if (typeof error !== 'undefined' && error) { %>
     <div class="alert"><%- icon('alert', { size: 18 }) %><span><%= error %></span></div>
@@ -16,14 +18,14 @@
 
   <form method="post" action="<%= formAction %>" <%= isNew ? 'enctype="multipart/form-data"' : '' %>>
     <div class="field">
-      <label for="name">藥品名稱</label>
+      <label class="field__label" for="name">藥品名稱</label>
       <input type="text" id="name" name="name" required maxlength="80"
              placeholder="例如：Amlodipine 5mg"
              value="<%= medication && medication.name ? medication.name : '' %>">
     </div>
 
     <div class="field">
-      <label for="display_name">顯示名稱</label>
+      <label class="field__label" for="display_name">顯示名稱</label>
       <input type="text" id="display_name" name="display_name" maxlength="40"
              placeholder="例如：血壓藥"
              value="<%= medication && medication.display_name ? medication.display_name : '' %>">
@@ -31,13 +33,13 @@
     </div>
 
     <div class="field">
-      <label for="purpose">用途</label>
+      <label class="field__label" for="purpose">用途</label>
       <input type="text" id="purpose" name="purpose" maxlength="80" placeholder="例如：降血壓"
              value="<%= medication && medication.purpose ? medication.purpose : '' %>">
     </div>
 
     <div class="field">
-      <label>服藥時段</label>
+      <span class="field__label">服藥時段</span>
       <div class="card">
         <% slots.forEach(function (slot) { %>
           <% const s = scheduleMap[slot.id]; %>
@@ -65,13 +67,13 @@
     </div>
 
     <div class="field">
-      <label for="note">備註</label>
+      <label class="field__label" for="note">備註</label>
       <textarea id="note" name="note" placeholder="例如：血壓低於 100 先暫停，並詢問醫師"><%= medication && medication.note ? medication.note : '' %></textarea>
     </div>
 
     <% if (isNew) { %>
       <div class="field">
-        <label>仿單 / 藥袋</label>
+        <span class="field__label">仿單 / 藥袋</span>
         <div class="card">
           <div class="upload">
             <label class="file-drop">

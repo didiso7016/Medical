@@ -3,12 +3,15 @@
 
 <main class="wrap">
   <% if (!medications.length) { %>
-    <div class="card empty" style="margin-top:20px">
-      <%- icon('pill', { size: 34, stroke: 1.4 }) %>
-      <p>還沒有<%= person.name %>的藥品。</p>
+    <div class="card card--spaced">
+      <div class="empty">
+        <%- icon('pill', { size: 34, stroke: 1.4 }) %>
+        <p class="empty__title">還沒有<%= person.name %>的藥品</p>
+        <p class="empty__message">按下方的「新增藥品」開始建立。</p>
+      </div>
     </div>
   <% } else { %>
-    <div class="card" style="margin-top:20px">
+    <div class="card card--spaced">
       <ul class="med-list">
         <% medications.forEach(function (m) { %>
           <li>
@@ -20,13 +23,17 @@
                   <% if (!m.is_active) { %><span class="tag tag--muted">已停用</span><% } %>
                 </span>
                 <span class="med-item__meta">
-                  <% if (m.schedules.length) { %>
-                    <%= m.schedules.map(s => s.slot_name).join('、') %>
-                  <% } else { %>
-                    未設定時段
-                  <% } %>
+                  <span>
+                    <% if (m.schedules.length) { %>
+                      <%= m.schedules.map(s => s.slot_name).join('、') %>
+                    <% } else { %>
+                      未設定時段
+                    <% } %>
+                  </span>
                   <% if (m.attachmentCount) { %>
-                    <span class="med-item__attach"><%- icon('paperclip', { size: 13 }) %><%= m.attachmentCount %></span>
+                    <span class="med-item__attach">
+                      <%- icon('paperclip', { size: 13 }) %><%= m.attachmentCount %>
+                    </span>
                   <% } %>
                 </span>
               </span>
