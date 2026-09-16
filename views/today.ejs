@@ -44,7 +44,9 @@
                       aria-pressed="<%= item.taken_at ? 'true' : 'false' %>">
                 <span class="dose__box"><%- icon('check', { size: 15, stroke: 3 }) %></span>
                 <span class="dose__body">
-                  <span class="dose__name"><%= item.label %></span>
+                  <span class="dose__name">
+                    <%- include('partials/pill-dot', { color: item.med_color }) %><%= item.label %>
+                  </span>
                   <% if (doseLine(item)) { %>
                     <span class="dose__meta"><%= doseLine(item) %></span>
                   <% } %>

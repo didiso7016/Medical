@@ -33,6 +33,27 @@
     </div>
 
     <div class="field">
+      <span class="field__label">藥品顏色</span>
+      <div class="swatches">
+        <% const currentColor = medication && medication.color ? medication.color : ''; %>
+        <label class="swatch swatch--none">
+          <input type="radio" name="color" value="" <%= currentColor ? '' : 'checked' %>>
+          <span class="swatch__chip"><%- icon('x', { size: 14, stroke: 2.2 }) %></span>
+          <span class="swatch__label">未指定</span>
+        </label>
+        <% medColors.forEach(function (c) { %>
+          <label class="swatch">
+            <input type="radio" name="color" value="<%= c.key %>"
+                   <%= currentColor === c.key ? 'checked' : '' %>>
+            <span class="swatch__chip" data-color="<%= c.key %>"></span>
+            <span class="swatch__label"><%= c.label %></span>
+          </label>
+        <% }) %>
+      </div>
+      <p class="hint">選實際藥錠或膠囊的顏色，拿到藥的時候可以直接核對。</p>
+    </div>
+
+    <div class="field">
       <label class="field__label" for="purpose">用途</label>
       <input type="text" id="purpose" name="purpose" maxlength="80" placeholder="例如：降血壓"
              value="<%= medication && medication.purpose ? medication.purpose : '' %>">

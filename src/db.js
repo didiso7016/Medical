@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS medication (
   person_id    INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE,
   name         TEXT    NOT NULL,
   display_name TEXT,
+  color        TEXT,
   purpose      TEXT,
   note         TEXT,
   is_active    INTEGER NOT NULL DEFAULT 1,
@@ -100,6 +101,12 @@ if (!personColumns.includes('color')) {
 }
 if (personColumns.includes('emoji')) {
   db.exec('ALTER TABLE person DROP COLUMN emoji');
+}
+
+// 藥品顏色（實際藥錠／膠囊的顏色，方便對照藥袋裡的藥）
+const medicationColumns = db.prepare('PRAGMA table_info(medication)').all().map((c) => c.name);
+if (!medicationColumns.includes('color')) {
+  db.exec('ALTER TABLE medication ADD COLUMN color TEXT');
 }
 
 // 時段為系統共用字典（每個人的「排序」才是個人資料）

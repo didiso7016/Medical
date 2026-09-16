@@ -50,6 +50,7 @@ export function buildDayPlan(personId, dateStr) {
               s.sort_order,
               m.name          AS med_name,
               m.display_name  AS med_display_name,
+              m.color         AS med_color,
               m.purpose       AS med_purpose,
               l.taken_at      AS taken_at
          FROM medication_schedule s

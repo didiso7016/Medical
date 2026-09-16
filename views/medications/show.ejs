@@ -7,10 +7,12 @@
       <%- icon('chevron-left', { size: 17 }) %>藥品清單
     </a>
     <h1 class="page-title">
-      <%= medication.display_name || medication.name %>
+      <%- include('../partials/pill-dot', { color: medication.color, size: 'lg' }) %><%= medication.display_name || medication.name %>
       <% if (!medication.is_active) { %><span class="tag tag--muted">已停用</span><% } %>
     </h1>
-    <p class="page-sub"><%= medication.name %></p>
+    <p class="page-sub">
+      <%= medication.name %><% if (medication.color) { %>　·　<%= medColorLabel(medication.color) %><% } %>
+    </p>
   </div>
 
   <div class="card">

@@ -1,0 +1,4 @@
+<%#
+  藥品顏色標記。參數：color（可為 null）、size（'sm' | 'md'）
+  沒有指定顏色就整個不顯示，不要留一個空圓圈。
+%><% if (color) { %><span class="pill-dot pill-dot--<%= typeof size === 'undefined' ? 'md' : size %>" data-color="<%= color %>" title="<%= medColorLabel(color) %>" aria-label="<%= medColorLabel(color) %>"></span><% } %>

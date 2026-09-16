@@ -8,6 +8,7 @@ import {
 import {
   upload, saveAttachments, deleteAttachmentFile, deleteMedicationDir, attachmentPath, isImage,
 } from '../lib/uploads.js';
+import { MED_COLORS, isMedColor } from '../lib/format.js';
 
 const router = express.Router({ mergeParams: true });
 
@@ -35,9 +36,13 @@ function renderForm(res, status, opts) {
     active: 'medications',
     slots: timeSlots(),
     mealOptions: MEAL_OPTIONS,
+    medColors: MED_COLORS,
     ...opts,
   });
 }
+
+/** 顏色是選填的：沒選就存 null，不要硬塞一個預設色 */
+const parseColor = (value) => (isMedColor(value) ? value : null);
 
 // ---------------------------------------------------------------- 藥品清單
 router.get('/', (req, res) => {
@@ -83,13 +88,15 @@ router.post('/', upload.array('files', 8), (req, res) => {
 
   const info = db
     .prepare(
-      `INSERT INTO medication (person_id, name, display_name, purpose, note, is_active, created_at)
-       VALUES (?, ?, ?, ?, ?, 1, ?)`
+      `INSERT INTO medication
+         (person_id, name, display_name, color, purpose, note, is_active, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, 1, ?)`
     )
     .run(
       personId,
       name,
       (req.body.display_name ?? '').trim() || null,
+      parseColor(req.body.color),
       (req.body.purpose ?? '').trim() || null,
       (req.body.note ?? '').trim() || null,
       new Date().toISOString()
@@ -148,11 +155,12 @@ router.post('/:medicationId', (req, res) => {
   const name = (req.body.name ?? '').trim() || req.medication.name;
 
   db.prepare(
-    `UPDATE medication SET name = ?, display_name = ?, purpose = ?, note = ?
+    `UPDATE medication SET name = ?, display_name = ?, color = ?, purpose = ?, note = ?
       WHERE id = ? AND person_id = ?`
   ).run(
     name,
     (req.body.display_name ?? '').trim() || null,
+    parseColor(req.body.color),
     (req.body.purpose ?? '').trim() || null,
     (req.body.note ?? '').trim() || null,
     medId,

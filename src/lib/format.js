@@ -71,3 +71,25 @@ export function avatarText(name) {
   const n = (name ?? '').trim();
   return n.length <= 2 ? n : n.slice(-2);
 }
+
+/**
+ * 藥品顏色：對照實際藥錠／膠囊的外觀，讓人拿到藥可以核對。
+ * 色值直接寫在 CSS（.pill-dot[data-color=...]），這裡只管有哪些選項。
+ */
+export const MED_COLORS = [
+  { key: 'white', label: '白色' },
+  { key: 'ivory', label: '米黃' },
+  { key: 'yellow', label: '黃色' },
+  { key: 'orange', label: '橘色' },
+  { key: 'pink', label: '粉紅' },
+  { key: 'red', label: '紅色' },
+  { key: 'brown', label: '棕色' },
+  { key: 'green', label: '綠色' },
+  { key: 'blue', label: '藍色' },
+  { key: 'purple', label: '紫色' },
+  { key: 'clear', label: '透明' },
+];
+
+export const isMedColor = (key) => MED_COLORS.some((c) => c.key === key);
+
+export const medColorLabel = (key) => MED_COLORS.find((c) => c.key === key)?.label ?? '';

@@ -753,3 +753,91 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* ==========================================================================
+   藥品顏色
+   色值對照實際藥錠／膠囊，所以深色模式不做反轉，只調外框讓它在深色底看得見。
+   ========================================================================== */
+
+.pill-dot {
+  flex: none;
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--pill, transparent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16);
+  vertical-align: baseline;
+}
+.pill-dot--sm { width: 9px; height: 9px; }
+.pill-dot--md { width: 11px; height: 11px; }
+.pill-dot--lg { width: 14px; height: 14px; }
+
+@media (prefers-color-scheme: dark) {
+  .pill-dot { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); }
+}
+
+/* 名稱與色點用 gap 排版，不用 margin，才不會在不同容器裡間距不一致 */
+.dose__name { display: flex; align-items: center; gap: 7px; }
+.sort-item__name { display: flex; align-items: center; gap: 7px; }
+
+.pill-dot[data-color="white"],  .swatch__chip[data-color="white"]  { --pill: #ffffff; }
+.pill-dot[data-color="ivory"],  .swatch__chip[data-color="ivory"]  { --pill: #f1e6cf; }
+.pill-dot[data-color="yellow"], .swatch__chip[data-color="yellow"] { --pill: #f4cc45; }
+.pill-dot[data-color="orange"], .swatch__chip[data-color="orange"] { --pill: #ef8b3c; }
+.pill-dot[data-color="pink"],   .swatch__chip[data-color="pink"]   { --pill: #f2a5bb; }
+.pill-dot[data-color="red"],    .swatch__chip[data-color="red"]    { --pill: #d6453c; }
+.pill-dot[data-color="brown"],  .swatch__chip[data-color="brown"]  { --pill: #8a5a3b; }
+.pill-dot[data-color="green"],  .swatch__chip[data-color="green"]  { --pill: #4aab6c; }
+.pill-dot[data-color="blue"],   .swatch__chip[data-color="blue"]   { --pill: #4a8fd8; }
+.pill-dot[data-color="purple"], .swatch__chip[data-color="purple"] { --pill: #9a6ec3; }
+.pill-dot[data-color="clear"],  .swatch__chip[data-color="clear"]  {
+  --pill: linear-gradient(135deg, #ffffff 45%, #dbe0e5);
+}
+
+/* 顏色選擇器 */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+}
+.swatch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+.swatch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.swatch__chip {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--pill, var(--surface-sunk));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16);
+  color: var(--text-faint);
+}
+.swatch__label { font-size: 12px; color: var(--text-soft); line-height: 1.3; }
+
+.swatch:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.swatch:has(input:checked) .swatch__label { color: var(--accent-ink); font-weight: 700; }
+.swatch:has(input:checked) .swatch__chip {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16), 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+.swatch:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.swatch--none .swatch__chip {
+  background: var(--surface-sunk);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+@media (prefers-color-scheme: dark) {
+  .swatch__chip { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); }
+  .swatch:has(input:checked) .swatch__chip {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22), 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+  }
+}

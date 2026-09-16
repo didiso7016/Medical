@@ -90,7 +90,7 @@ router.get('/order', (req, res) => {
   const rows = db
     .prepare(
       `SELECT s.id, s.time_slot_id, s.sort_order, s.dose, s.meal_relation,
-              m.name AS med_name, m.display_name AS med_display_name
+              m.name AS med_name, m.display_name AS med_display_name, m.color AS med_color
          FROM medication_schedule s
          JOIN medication m ON m.id = s.medication_id AND m.person_id = s.person_id
         WHERE s.person_id = ? AND m.is_active = 1

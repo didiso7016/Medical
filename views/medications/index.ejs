@@ -19,7 +19,7 @@
                href="/persons/<%= person.id %>/medications/<%= m.id %>">
               <span class="med-item__body">
                 <span class="med-item__name">
-                  <%= m.display_name || m.name %>
+                  <%- include('../partials/pill-dot', { color: m.color }) %><%= m.display_name || m.name %>
                   <% if (!m.is_active) { %><span class="tag tag--muted">已停用</span><% } %>
                 </span>
                 <span class="med-item__meta">

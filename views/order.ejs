@@ -31,7 +31,9 @@
                 <input type="hidden" name="order[slot_<%= group.slot.id %>][]" value="<%= item.id %>">
                 <span class="sort-item__handle" data-drag-handle><%- icon('grip', { size: 20 }) %></span>
                 <span class="sort-item__body">
-                  <span class="sort-item__name"><%= item.label %></span>
+                  <span class="sort-item__name">
+                    <%- include('partials/pill-dot', { color: item.med_color, size: 'sm' }) %><%= item.label %>
+                  </span>
                   <% if (doseLine(item)) { %>
                     <span class="sort-item__meta"><%= doseLine(item) %></span>
                   <% } %>

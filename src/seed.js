@@ -17,8 +17,9 @@ const insertPerson = db.prepare(
   'INSERT INTO person (name, color, sort_order, created_at) VALUES (?, ?, ?, ?)'
 );
 const insertMed = db.prepare(
-  `INSERT INTO medication (person_id, name, display_name, purpose, note, is_active, created_at)
-   VALUES (?, ?, ?, ?, ?, 1, ?)`
+  `INSERT INTO medication
+     (person_id, name, display_name, color, purpose, note, is_active, created_at)
+   VALUES (?, ?, ?, ?, ?, ?, 1, ?)`
 );
 const insertSchedule = db.prepare(
   `INSERT INTO medication_schedule
@@ -31,11 +32,11 @@ const FAMILY = [
     name: '爸爸', color: 'indigo',
     // 規格 §6：爸爸的早餐順序是 心臟藥 → 血壓藥 → 胃藥
     meds: [
-      { name: 'Digoxin 0.25mg', display: '心臟藥', purpose: '心臟衰竭',
+      { name: 'Digoxin 0.25mg', display: '心臟藥', color: 'white', purpose: '心臟衰竭',
         slots: [['breakfast', '1 顆', 'after', 10]] },
-      { name: 'Losartan 50mg', display: '血壓藥', purpose: '降血壓',
+      { name: 'Losartan 50mg', display: '血壓藥', color: 'ivory', purpose: '降血壓',
         slots: [['breakfast', '1 顆', 'after', 20]] },
-      { name: 'Famotidine 20mg', display: '胃藥', purpose: '護胃',
+      { name: 'Famotidine 20mg', display: '胃藥', color: 'white', purpose: '護胃',
         slots: [['breakfast', '1 顆', 'before', 30]] },
     ],
   },
@@ -43,14 +44,14 @@ const FAMILY = [
     name: '媽媽', color: 'rose',
     // 規格 §6：媽媽的早餐順序是 胃藥 → 血壓藥 → 維他命（跟爸爸互不影響）
     meds: [
-      { name: 'Famotidine 20mg', display: '胃藥', purpose: '護胃',
+      { name: 'Famotidine 20mg', display: '胃藥', color: 'white', purpose: '護胃',
         slots: [['breakfast', '1 顆', 'before', 10], ['lunch', '1 顆', 'before', 10]] },
-      { name: 'Amlodipine 5mg', display: '血壓藥', purpose: '降血壓',
+      { name: 'Amlodipine 5mg', display: '血壓藥', color: 'pink', purpose: '降血壓',
         note: '收縮壓低於 100 先暫停，並詢問醫師',
         slots: [['breakfast', '1 顆', 'after', 20], ['dinner', '1 顆', 'after', 10]] },
-      { name: '綜合維他命', display: '維他命', purpose: '營養補充',
+      { name: '綜合維他命', display: '維他命', color: 'orange', purpose: '營養補充',
         slots: [['breakfast', '1 顆', 'after', 30]] },
-      { name: 'Atorvastatin 10mg', display: '血脂藥', purpose: '降膽固醇',
+      { name: 'Atorvastatin 10mg', display: '血脂藥', color: 'yellow', purpose: '降膽固醇',
         slots: [['bedtime', '1 顆', 'none', 10]] },
     ],
   },
@@ -63,7 +64,8 @@ FAMILY.forEach((p, i) => {
   const personId = Number(insertPerson.run(p.name, p.color, (i + 1) * 10, now).lastInsertRowid);
   for (const m of p.meds) {
     const medId = Number(
-      insertMed.run(personId, m.name, m.display, m.purpose ?? null, m.note ?? null, now).lastInsertRowid
+      insertMed.run(personId, m.name, m.display, m.color ?? null, m.purpose ?? null, m.note ?? null, now)
+        .lastInsertRowid
     );
     for (const [code, dose, meal, order] of m.slots) {
       insertSchedule.run(personId, medId, slotId[code], dose, meal, order);

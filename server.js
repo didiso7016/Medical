@@ -5,7 +5,7 @@ import multer from 'multer';
 
 import { loadPerson } from './src/lib/context.js';
 import { icon, SLOT_ICONS } from './src/lib/icons.js';
-import { avatarText } from './src/lib/format.js';
+import { avatarText, medColorLabel } from './src/lib/format.js';
 import rootRouter from './src/routes/root.js';
 import personRouter from './src/routes/person.js';
 import { cleanupTmp } from './src/lib/uploads.js';
@@ -20,6 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.locals.icon = icon;
 app.locals.SLOT_ICONS = SLOT_ICONS;
 app.locals.avatarText = avatarText;
+app.locals.medColorLabel = medColorLabel;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
