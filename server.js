@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import multer from 'multer';
+import os from 'node:os';
 
 import { loadPerson } from './src/lib/context.js';
 import { icon, SLOT_ICONS } from './src/lib/icons.js';
@@ -48,8 +49,20 @@ app.use((err, req, res, next) => {
   res.status(status).render('error', { title: '發生錯誤', status, message });
 });
 
+/** 列出這台電腦在區網上的 IPv4 位址，讓家人知道手機要連哪裡 */
+function lanAddresses() {
+  return Object.entries(os.networkInterfaces())
+    .flatMap(([name, addrs]) => (addrs ?? []).map((a) => ({ ...a, name })))
+    .filter((a) => a.family === 'IPv4' && !a.internal)
+    .sort((a, b) => Number(b.name === 'Wi-Fi') - Number(a.name === 'Wi-Fi'));
+}
+
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`家庭用藥系統已啟動： http://localhost:${PORT}`);
-  console.log('同一個 Wi-Fi 下的手機可用本機 IP 連線，例如 http://192.168.x.x:' + PORT);
+  console.log(`\n家庭用藥系統已啟動`);
+  console.log(`  這台電腦：  http://localhost:${PORT}`);
+  for (const addr of lanAddresses()) {
+    console.log(`  同一個 Wi-Fi：http://${addr.address}:${PORT}   (${addr.name})`);
+  }
+  console.log(`  用電腦名稱：  http://${os.hostname()}:${PORT}\n`);
 });

@@ -66,15 +66,15 @@
           <% const s = scheduleMap[slot.id]; %>
           <div class="slot-row <%= s ? '' : 'is-off' %>">
             <label class="slot-row__check">
-              <input type="checkbox" name="slots[<%= slot.id %>][enabled]" value="1"
+              <input type="checkbox" name="slots[slot_<%= slot.id %>][enabled]" value="1"
                      <%= s ? 'checked' : '' %>>
               <%- icon(SLOT_ICONS[slot.code], { size: 17 }) %>
               <%= slot.name %>
             </label>
             <div class="slot-row__fields">
-              <input type="text" name="slots[<%= slot.id %>][dose]" placeholder="1 顆"
+              <input type="text" name="slots[slot_<%= slot.id %>][dose]" placeholder="1 顆"
                      value="<%= s && s.dose ? s.dose : '' %>" aria-label="<%= slot.name %>劑量">
-              <select name="slots[<%= slot.id %>][meal]" aria-label="<%= slot.name %>飯前飯後">
+              <select name="slots[slot_<%= slot.id %>][meal]" aria-label="<%= slot.name %>飯前飯後">
                 <% mealOptions.forEach(function (opt) { %>
                   <option value="<%= opt.value %>"
                           <%= s && s.meal_relation === opt.value ? 'selected' : '' %>><%= opt.label %></option>

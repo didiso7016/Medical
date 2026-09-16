@@ -19,16 +19,27 @@ const MEAL_OPTIONS = [
 ];
 const KIND_LABELS = { bag: '藥袋', leaflet: '仿單', other: '其他' };
 
-/** 從表單取出「哪些時段要吃、吃多少」 */
+/**
+ * 從表單取出「哪些時段要吃、吃多少」。
+ *
+ * 表單欄位名稱是 slots[slot_3][dose] 而不是 slots[3][dose]：
+ * qs 會把純數字的 key 當成陣列索引，slots[1] 與 slots[3] 會被壓成
+ * 索引 0、1，時段 id 就消失了（勾早餐+晚餐會存成別的時段，只勾午餐則完全沒存）。
+ */
+const slotKey = (slotId) => `slot_${slotId}`;
+
 function parseSlotInput(body) {
   const raw = body.slots ?? {};
   return timeSlots()
-    .filter((slot) => raw[slot.id]?.enabled)
-    .map((slot) => ({
-      time_slot_id: slot.id,
-      dose: (raw[slot.id].dose ?? '').trim() || null,
-      meal_relation: ['before', 'after'].includes(raw[slot.id].meal) ? raw[slot.id].meal : 'none',
-    }));
+    .filter((slot) => raw[slotKey(slot.id)]?.enabled)
+    .map((slot) => {
+      const input = raw[slotKey(slot.id)];
+      return {
+        time_slot_id: slot.id,
+        dose: (input.dose ?? '').trim() || null,
+        meal_relation: ['before', 'after'].includes(input.meal) ? input.meal : 'none',
+      };
+    });
 }
 
 function renderForm(res, status, opts) {
@@ -243,11 +254,11 @@ router.post('/:medicationId/attachments/:attachmentId/delete', loadOwnedAttachme
   res.redirect(`/persons/${req.person.id}/medications/${req.medication.id}`);
 });
 
+/** 表單驗證失敗時，把使用者剛才填的時段內容再塞回畫面 */
 function buildScheduleMapFromBody(body) {
-  const raw = body.slots ?? {};
   const map = {};
-  for (const [slotId, v] of Object.entries(raw)) {
-    if (v?.enabled) map[slotId] = { dose: v.dose, meal_relation: v.meal };
+  for (const s of parseSlotInput(body)) {
+    map[s.time_slot_id] = { dose: s.dose, meal_relation: s.meal_relation };
   }
   return map;
 }
