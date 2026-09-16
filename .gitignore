@@ -1,0 +1,11 @@
+node_modules/
+
+# 家人的用藥資料與仿單照片絕對不進版控
+data/
+*.db
+*.db-wal
+*.db-shm
+
+*.log
+.DS_Store
+Thumbs.db

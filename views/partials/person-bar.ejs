@@ -1,0 +1,19 @@
+<%#
+  規格 §12：進入某位家庭成員後，畫面上方持續顯示「現在正在操作誰的資料」，
+  直到使用者按「← 換人」才離開這個人的資料區。
+%>
+<header class="person-bar">
+  <div class="person-bar__inner">
+    <a class="link-back" href="/"><%- icon('chevron-left', { size: 17 }) %>換人</a>
+    <div class="person-bar__name">
+      <%- include('avatar', { p: person, size: 'sm' }) %>
+      <span><%= person.name %></span>
+      <a class="person-bar__gear" href="/persons/<%= person.id %>/settings" aria-label="成員設定">
+        <%- icon('settings', { size: 19 }) %>
+      </a>
+    </div>
+    <% if (typeof subtitle !== 'undefined' && subtitle) { %>
+      <div class="person-bar__sub"><%= subtitle %></div>
+    <% } %>
+  </div>
+</header>

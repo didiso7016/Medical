@@ -1,0 +1,20 @@
+{
+  "name": "family-med",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "家庭用藥管理系統（以家庭成員為第一層的資料隔離）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node src/seed.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "multer": "^2.4.0"
+  }
+}

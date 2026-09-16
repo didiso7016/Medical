@@ -1,0 +1,12 @@
+<%# 底部分頁同樣綁在目前的人身上：每個連結都帶著 person id %>
+<nav class="tabbar">
+  <a href="/persons/<%= person.id %>/today" class="<%= active === 'today' ? 'is-active' : '' %>">
+    <%- icon('today', { size: 22 }) %><span>今日</span>
+  </a>
+  <a href="/persons/<%= person.id %>/medications" class="<%= active === 'medications' ? 'is-active' : '' %>">
+    <%- icon('pill', { size: 22 }) %><span>藥品</span>
+  </a>
+  <a href="/persons/<%= person.id %>/history" class="<%= active === 'history' ? 'is-active' : '' %>">
+    <%- icon('history', { size: 22 }) %><span>紀錄</span>
+  </a>
+</nav>

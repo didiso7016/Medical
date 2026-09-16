@@ -1,0 +1,49 @@
+<%- include('../partials/head', { title }) %>
+<%- include('../partials/person-bar', { person, subtitle: '藥品' }) %>
+
+<main class="wrap">
+  <% if (!medications.length) { %>
+    <div class="card empty" style="margin-top:20px">
+      <%- icon('pill', { size: 34, stroke: 1.4 }) %>
+      <p>還沒有<%= person.name %>的藥品。</p>
+    </div>
+  <% } else { %>
+    <div class="card" style="margin-top:20px">
+      <ul class="med-list">
+        <% medications.forEach(function (m) { %>
+          <li>
+            <a class="med-item <%= m.is_active ? '' : 'is-inactive' %>"
+               href="/persons/<%= person.id %>/medications/<%= m.id %>">
+              <span class="med-item__body">
+                <span class="med-item__name">
+                  <%= m.display_name || m.name %>
+                  <% if (!m.is_active) { %><span class="tag tag--muted">已停用</span><% } %>
+                </span>
+                <span class="med-item__meta">
+                  <% if (m.schedules.length) { %>
+                    <%= m.schedules.map(s => s.slot_name).join('、') %>
+                  <% } else { %>
+                    未設定時段
+                  <% } %>
+                  <% if (m.attachmentCount) { %>
+                    <span class="med-item__attach"><%- icon('paperclip', { size: 13 }) %><%= m.attachmentCount %></span>
+                  <% } %>
+                </span>
+              </span>
+              <span class="med-item__arrow"><%- icon('chevron-right', { size: 18 }) %></span>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="btn-row">
+    <a class="btn btn--primary btn--block" href="/persons/<%= person.id %>/medications/new">
+      <%- icon('plus', { size: 18, stroke: 2 }) %>新增藥品
+    </a>
+  </div>
+</main>
+
+<%- include('../partials/tabbar', { person, active }) %>
+<%- include('../partials/foot') %>

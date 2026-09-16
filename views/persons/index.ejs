@@ -1,0 +1,29 @@
+<%- include('../partials/head', { title }) %>
+
+<main class="wrap picker">
+  <h1>家庭用藥</h1>
+  <p>請選擇家庭成員</p>
+
+  <div class="person-grid">
+    <% persons.forEach(function (p) { %>
+      <a class="person-card" href="/persons/<%= p.id %>/today">
+        <%- include('../partials/avatar', { p, size: 'lg' }) %>
+        <span class="name"><%= p.name %></span>
+        <% if (!p.summary || !p.summary.total) { %>
+          <span class="meta">尚未建立藥品</span>
+        <% } else if (p.summary.done >= p.summary.total) { %>
+          <span class="meta done"><%- icon('check', { size: 14, stroke: 2.4 }) %>今日已完成</span>
+        <% } else { %>
+          <span class="meta">今日 <%= p.summary.done %> / <%= p.summary.total %></span>
+        <% } %>
+      </a>
+    <% }) %>
+
+    <a class="person-card person-card--add" href="/persons/new">
+      <%- icon('user-plus', { size: 26 }) %>
+      <span class="name">新增成員</span>
+    </a>
+  </div>
+</main>
+
+<%- include('../partials/foot') %>

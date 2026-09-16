@@ -1,0 +1,76 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/person-bar', { person, subtitle: dateLabel }) %>
+
+<main class="wrap">
+  <div class="datebar">
+    <a href="/persons/<%= person.id %>/today?date=<%= prevDate %>" aria-label="前一天">
+      <%- icon('chevron-left', { size: 18 }) %>前一天
+    </a>
+    <span class="progress">
+      <% if (progress.total) { %>
+        已服用 <strong><%= progress.done %></strong> / <%= progress.total %>
+      <% } %>
+    </span>
+    <% if (isToday) { %>
+      <a href="/persons/<%= person.id %>/today?date=<%= nextDate %>" class="is-muted" aria-label="後一天">
+        後一天<%- icon('chevron-right', { size: 18 }) %>
+      </a>
+    <% } else { %>
+      <a href="/persons/<%= person.id %>/today">回到今天<%- icon('chevron-right', { size: 18 }) %></a>
+    <% } %>
+  </div>
+
+  <% if (!groups.length) { %>
+    <div class="card empty">
+      <%- icon('pill', { size: 34, stroke: 1.4 }) %>
+      <p><%= person.name %>目前沒有排定的用藥。<br>先新增藥品並設定服用時段吧。</p>
+    </div>
+  <% } %>
+
+  <% groups.forEach(function (group) { %>
+    <section class="section">
+      <h2 class="section__title">
+        <%- icon(SLOT_ICONS[group.slot.code], { size: 16 }) %>
+        <%= group.slot.name %>
+        <span class="count"><%= group.items.filter(i => i.taken_at).length %>/<%= group.items.length %></span>
+      </h2>
+      <div class="card">
+        <ul class="dose-list">
+          <% group.items.forEach(function (item) { %>
+            <li>
+              <%# 每一列就是一個表單：後端會再驗證這個藥品是否屬於目前這個人 %>
+              <form method="post" action="/persons/<%= person.id %>/today/toggle" class="js-toggle">
+                <input type="hidden" name="medication_id" value="<%= item.medication_id %>">
+                <input type="hidden" name="time_slot_id" value="<%= item.time_slot_id %>">
+                <input type="hidden" name="date" value="<%= date %>">
+                <button type="submit" class="dose <%= item.taken_at ? 'is-done' : '' %>"
+                        aria-pressed="<%= item.taken_at ? 'true' : 'false' %>">
+                  <span class="dose__box"><%- icon('check', { size: 15, stroke: 3 }) %></span>
+                  <span class="dose__body">
+                    <span class="dose__name"><%= item.label %></span>
+                    <% if (doseLine(item)) { %>
+                      <span class="dose__meta"><%= doseLine(item) %></span>
+                    <% } %>
+                  </span>
+                  <span class="dose__time"><%= hhmm(item.taken_at) %></span>
+                </button>
+              </form>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    </section>
+  <% }) %>
+
+  <div class="btn-row">
+    <a class="btn btn--primary" href="/persons/<%= person.id %>/medications/new">
+      <%- icon('plus', { size: 18, stroke: 2 }) %>新增藥品
+    </a>
+    <% if (groups.length) { %>
+      <a class="btn" href="/persons/<%= person.id %>/order"><%- icon('sort', { size: 18 }) %>排序</a>
+    <% } %>
+  </div>
+</main>
+
+<%- include('partials/tabbar', { person, active }) %>
+<%- include('partials/foot') %>

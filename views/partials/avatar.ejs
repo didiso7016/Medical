@@ -1,0 +1,5 @@
+<%#
+  成員頭像：稱呼字 + 個人配色的圓形標記（LINE / Google 那種做法），
+  不用 emoji——emoji 在每台裝置長得不一樣，也很難一眼分辨是誰。
+  參數：p（person）、size（'sm' | 'md' | 'lg'）
+%><span class="avatar avatar--<%= typeof size === 'undefined' ? 'md' : size %>" data-color="<%= p.color %>" aria-hidden="true"><%= avatarText(p.name) %></span>

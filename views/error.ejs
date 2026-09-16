@@ -1,0 +1,17 @@
+<%- include('partials/head', { title }) %>
+
+<main class="wrap" style="padding-top: calc(var(--safe-top) + 60px)">
+  <div class="card empty">
+    <%- icon(status === 404 ? 'search' : 'alert', { size: 34, stroke: 1.4 }) %>
+    <p class="empty__message"><%= message %></p>
+    <p>代碼 <%= status %></p>
+  </div>
+  <div class="btn-row">
+    <% if (locals.person) { %>
+      <a class="btn" href="/persons/<%= locals.person.id %>/today">回到 <%= locals.person.name %></a>
+    <% } %>
+    <a class="btn btn--primary" href="/">回到成員選擇</a>
+  </div>
+</main>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,109 @@
+<%- include('../partials/head', { title }) %>
+<%- include('../partials/person-bar', { person, subtitle: '藥品' }) %>
+
+<main class="wrap">
+  <a class="link-back" href="/persons/<%= person.id %>/medications" style="margin-top:14px">
+    <%- icon('chevron-left', { size: 17 }) %>藥品清單
+  </a>
+
+  <h1 class="page-title">
+    <%= medication.display_name || medication.name %>
+    <% if (!medication.is_active) { %><span class="tag tag--muted">已停用</span><% } %>
+  </h1>
+  <p class="page-sub"><%= medication.name %></p>
+
+  <div class="card">
+    <div class="detail-block">
+      <h2>服藥時段</h2>
+      <% if (schedules.length) { %>
+        <ul class="slot-summary">
+          <% schedules.forEach(function (s) { %>
+            <li>
+              <%- icon(SLOT_ICONS[s.slot_code], { size: 16 }) %>
+              <span class="slot-summary__name"><%= s.slot_name %></span>
+              <span class="slot-summary__dose"><%= doseLine(s) || '—' %></span>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p class="muted">尚未設定，這個藥品不會出現在「今日」清單。</p>
+      <% } %>
+    </div>
+
+    <% if (medication.purpose) { %>
+      <div class="detail-block"><h2>用途</h2><p><%= medication.purpose %></p></div>
+    <% } %>
+    <% if (medication.note) { %>
+      <div class="detail-block"><h2>備註</h2><p><%= medication.note %></p></div>
+    <% } %>
+
+    <div class="detail-block">
+      <h2>仿單 / 藥袋<% if (attachments.length) { %>（<%= attachments.length %>）<% } %></h2>
+      <% if (attachments.length) { %>
+        <div class="attach-grid">
+          <% attachments.forEach(function (a) { %>
+            <% const fileUrl = '/persons/' + person.id + '/medications/' + medication.id + '/attachments/' + a.id + '/file'; %>
+            <figure class="attach">
+              <a href="<%= fileUrl %>" target="_blank" rel="noopener">
+                <% if (a.isImage) { %>
+                  <img class="attach__thumb" src="<%= fileUrl %>" alt="<%= a.kindLabel %>" loading="lazy">
+                <% } else { %>
+                  <span class="attach__file"><%- icon('file', { size: 30, stroke: 1.4 }) %></span>
+                <% } %>
+              </a>
+              <figcaption class="attach__bar">
+                <span class="name"><%= a.kindLabel %></span>
+                <form method="post" data-confirm="要刪除這個檔案嗎？"
+                      action="<%= '/persons/' + person.id + '/medications/' + medication.id + '/attachments/' + a.id + '/delete' %>">
+                  <button type="submit" aria-label="刪除檔案"><%- icon('x', { size: 15 }) %></button>
+                </form>
+              </figcaption>
+            </figure>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="muted">還沒有上傳仿單或藥袋照片。</p>
+      <% } %>
+    </div>
+
+    <%# 上傳目標由網址決定：這個人 + 這個藥品（規格 §5） %>
+    <form class="upload" method="post" enctype="multipart/form-data"
+          action="/persons/<%= person.id %>/medications/<%= medication.id %>/attachments">
+      <label class="file-drop">
+        <input type="file" name="files" accept="image/*,application/pdf" multiple capture="environment">
+        <span class="file-drop__label"><%- icon('camera', { size: 20 }) %>拍照或選擇檔案</span>
+      </label>
+      <div class="upload__row">
+        <select name="kind" aria-label="檔案類型">
+          <option value="leaflet">仿單</option>
+          <option value="bag">藥袋</option>
+          <option value="other">其他</option>
+        </select>
+        <button class="btn btn--sm" type="submit" style="flex:1">上傳</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="btn-row">
+    <a class="btn" href="/persons/<%= person.id %>/medications/<%= medication.id %>/edit">
+      <%- icon('pencil', { size: 17 }) %>編輯
+    </a>
+    <form method="post" action="/persons/<%= person.id %>/medications/<%= medication.id %>/active" style="flex:1">
+      <input type="hidden" name="is_active" value="<%= medication.is_active ? '0' : '1' %>">
+      <button class="btn btn--block" type="submit">
+        <%- icon('power', { size: 17 }) %><%= medication.is_active ? '停用' : '重新啟用' %>
+      </button>
+    </form>
+  </div>
+
+  <form method="post" action="/persons/<%= person.id %>/medications/<%= medication.id %>/delete"
+        class="btn-row" data-confirm="刪除後，這個藥品的仿單與服藥紀錄都會一起刪除，確定嗎？">
+    <button class="btn btn--danger btn--block" type="submit">
+      <%- icon('trash', { size: 17 }) %>刪除藥品
+    </button>
+  </form>
+  <p class="footnote">只是暫時不吃的話，選「停用」就好——停用不會刪掉過去的服藥紀錄。</p>
+</main>
+
+<%- include('../partials/tabbar', { person, active }) %>
+<%- include('../partials/foot') %>

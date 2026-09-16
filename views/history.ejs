@@ -1,0 +1,38 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/person-bar', { person, subtitle: '服藥紀錄' }) %>
+
+<main class="wrap">
+  <%# 規格 §7：紀錄一律從目前的家庭成員 context 查詢，不會混入其他人 %>
+  <h1 class="page-title"><%= person.name %>的紀錄</h1>
+  <p class="page-sub">最近 <%= days.length %> 天有服藥紀錄的日子。</p>
+
+  <% if (!days.length) { %>
+    <div class="card empty">
+      <%- icon('history', { size: 34, stroke: 1.4 }) %>
+      <p>還沒有<%= person.name %>的服藥紀錄。<br>在「今日」勾選服藥後就會出現在這裡。</p>
+    </div>
+  <% } %>
+
+  <% days.forEach(function (day) { %>
+    <section class="history-day">
+      <div class="history-day__date"><%= formatShortDate(day.date) %>　<%= formatLongDate(day.date) %></div>
+      <div class="card">
+        <% day.slots.forEach(function (slot) { %>
+          <div class="history-slot">
+            <div class="history-slot__name"><%= slot.name %></div>
+            <% slot.items.forEach(function (item) { %>
+              <div class="history-row">
+                <span class="history-row__check"><%- icon('check', { size: 14, stroke: 2.6 }) %></span>
+                <span><%= item.label %></span>
+                <span class="time"><%= hhmm(item.taken_at) %></span>
+              </div>
+            <% }) %>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+  <% }) %>
+</main>
+
+<%- include('partials/tabbar', { person, active }) %>
+<%- include('partials/foot') %>

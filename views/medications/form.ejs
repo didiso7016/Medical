@@ -1,0 +1,102 @@
+<% const isNew = !medication || !medication.id; %>
+<%- include('../partials/head', { title }) %>
+<%- include('../partials/person-bar', { person, subtitle: isNew ? '新增藥品' : '編輯藥品' }) %>
+
+<main class="wrap">
+  <%#
+    規格 §4：使用者已經在這個人的空間裡，
+    所以這張表單沒有、也不需要「家庭成員」下拉選單。
+  %>
+  <h1 class="page-title"><%= isNew ? '新增藥品' : '編輯藥品' %></h1>
+  <p class="page-sub">這筆藥品會直接屬於 <%= person.name %>。</p>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert"><%- icon('alert', { size: 18 }) %><span><%= error %></span></div>
+  <% } %>
+
+  <form method="post" action="<%= formAction %>" <%= isNew ? 'enctype="multipart/form-data"' : '' %>>
+    <div class="field">
+      <label for="name">藥品名稱</label>
+      <input type="text" id="name" name="name" required maxlength="80"
+             placeholder="例如：Amlodipine 5mg"
+             value="<%= medication && medication.name ? medication.name : '' %>">
+    </div>
+
+    <div class="field">
+      <label for="display_name">顯示名稱</label>
+      <input type="text" id="display_name" name="display_name" maxlength="40"
+             placeholder="例如：血壓藥"
+             value="<%= medication && medication.display_name ? medication.display_name : '' %>">
+      <p class="hint">今日用藥畫面會顯示這個名稱，留空就用藥品名稱。</p>
+    </div>
+
+    <div class="field">
+      <label for="purpose">用途</label>
+      <input type="text" id="purpose" name="purpose" maxlength="80" placeholder="例如：降血壓"
+             value="<%= medication && medication.purpose ? medication.purpose : '' %>">
+    </div>
+
+    <div class="field">
+      <label>服藥時段</label>
+      <div class="card">
+        <% slots.forEach(function (slot) { %>
+          <% const s = scheduleMap[slot.id]; %>
+          <div class="slot-row <%= s ? '' : 'is-off' %>">
+            <label class="slot-row__check">
+              <input type="checkbox" name="slots[<%= slot.id %>][enabled]" value="1"
+                     <%= s ? 'checked' : '' %>>
+              <%- icon(SLOT_ICONS[slot.code], { size: 17 }) %>
+              <%= slot.name %>
+            </label>
+            <div class="slot-row__fields">
+              <input type="text" name="slots[<%= slot.id %>][dose]" placeholder="1 顆"
+                     value="<%= s && s.dose ? s.dose : '' %>" aria-label="<%= slot.name %>劑量">
+              <select name="slots[<%= slot.id %>][meal]" aria-label="<%= slot.name %>飯前飯後">
+                <% mealOptions.forEach(function (opt) { %>
+                  <option value="<%= opt.value %>"
+                          <%= s && s.meal_relation === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      <p class="hint">勾選的時段會出現在「今日」清單裡。</p>
+    </div>
+
+    <div class="field">
+      <label for="note">備註</label>
+      <textarea id="note" name="note" placeholder="例如：血壓低於 100 先暫停，並詢問醫師"><%= medication && medication.note ? medication.note : '' %></textarea>
+    </div>
+
+    <% if (isNew) { %>
+      <div class="field">
+        <label>仿單 / 藥袋</label>
+        <div class="card">
+          <div class="upload">
+            <label class="file-drop">
+              <input type="file" name="files" accept="image/*,application/pdf" multiple capture="environment">
+              <span class="file-drop__label"><%- icon('camera', { size: 20 }) %>拍照或選擇檔案</span>
+            </label>
+            <div class="upload__row">
+              <select name="kind" aria-label="檔案類型">
+                <option value="leaflet">仿單</option>
+                <option value="bag">藥袋</option>
+                <option value="other">其他</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <p class="hint">也可以之後再到藥品頁面補拍。</p>
+      </div>
+    <% } %>
+
+    <div class="btn-row">
+      <a class="btn" href="<%= isNew ? '/persons/' + person.id + '/medications' : '/persons/' + person.id + '/medications/' + medication.id %>">取消</a>
+      <button class="btn btn--primary" type="submit">儲存</button>
+    </div>
+  </form>
+</main>
+
+<%- include('../partials/tabbar', { person, active }) %>
+<%- include('../partials/foot') %>

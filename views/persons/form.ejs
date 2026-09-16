@@ -1,0 +1,52 @@
+<%- include('../partials/head', { title }) %>
+
+<main class="wrap" style="padding-top: calc(var(--safe-top) + 24px)">
+  <a class="link-back" href="<%= person ? '/persons/' + person.id + '/today' : '/' %>">
+    <%- icon('chevron-left', { size: 17 }) %>返回
+  </a>
+  <h1 class="page-title"><%= person ? '成員設定' : '新增家庭成員' %></h1>
+  <p class="page-sub">每位成員的藥品、排程、仿單與紀錄完全獨立，不會互相看到。</p>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert"><%- icon('alert', { size: 18 }) %><span><%= error %></span></div>
+  <% } %>
+
+  <form method="post" action="<%= formAction %>">
+    <div class="field">
+      <label for="name">稱呼</label>
+      <input type="text" id="name" name="name" maxlength="12" required
+             placeholder="例如：媽媽" value="<%= person ? person.name : '' %>">
+      <p class="hint">頭像會顯示稱呼的最後兩個字，例如「阿公」顯示「阿公」。</p>
+    </div>
+
+    <div class="field">
+      <label>標示顏色</label>
+      <div class="color-picker">
+        <% colors.forEach(function (c, i) { %>
+          <label class="color-chip" data-color="<%= c.key %>">
+            <input type="radio" name="color" value="<%= c.key %>"
+                   <%= (person ? person.color === c.key : i === 0) ? 'checked' : '' %>>
+            <span class="color-chip__dot"></span>
+            <span class="color-chip__label"><%= c.label %></span>
+          </label>
+        <% }) %>
+      </div>
+      <p class="hint">用顏色分辨家庭成員，避免看錯正在操作誰的資料。</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn--primary btn--block" type="submit">儲存</button>
+    </div>
+  </form>
+
+  <% if (person && typeof canDelete !== 'undefined' && canDelete) { %>
+    <form method="post" action="/persons/<%= person.id %>/settings/delete" class="btn-row"
+          data-confirm="刪除「<%= person.name %>」會一併刪除這個人的所有藥品、仿單與服藥紀錄，確定嗎？">
+      <button class="btn btn--danger btn--block" type="submit">
+        <%- icon('trash', { size: 18 }) %>刪除這位成員
+      </button>
+    </form>
+  <% } %>
+</main>
+
+<%- include('../partials/foot') %>
